@@ -1,0 +1,31 @@
+{
+  "name": "map",
+  "version": "0.0.1",
+  "authors": [
+    "James Mazikowski <james@mazikowski.net>"
+  ],
+  "description": "Incident recording app",
+  "main": "index.html",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "mazikowski.net",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "bootstrap-material-design": "~0.3.0",
+    "bootstrap-material-datetimepicker": "~2.0.0",
+    "leaflet": "~0.7.5",
+    "normalize-css": "~3.0.3",
+    "Proj4Leaflet": "proj4leaflet#~0.7.1"
+  },
+  "resolutions": {
+    "jquery": ">= 1.9.1"
+  }
+}

@@ -1,0 +1,33 @@
+/**
+ * Incident recording apps
+ *
+ * James Mazikowski
+ * (256) 655-2070
+ * james@mazikowski.net
+ */
+
+html, body {
+	height: 100%;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+#map {
+	height: 100%;
+	width: 100%;
+}
+
+.btn-fab i {
+	font-size: 30pt;
+	margin-top: -3px;
+	margin-left: -7px;
+}
+
+.input-group-btn .btn {
+	padding: 8px;
+}
+
+.help-block {
+	display: none;
+}

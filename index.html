@@ -1,0 +1,173 @@
+<!--
+Incident recording app
+James Mazikowski
+(256) 655-2070
+james@mazikowski.net
+-->
+
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<title>Incident Recording App</title>
+
+	<link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css" />
+	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/material.min.css" />
+	<link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.min.css" />
+	<link rel="stylesheet" href="bower_components/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" />
+	<link rel="stylesheet" href="bower_components/normalize-css/normalize.css"/>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+	<link rel="stylesheet" href="app.css" />
+
+	<script src="bower_components/jquery/dist/jquery.min.js"></script>
+	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="bower_components/bootstrap-material-design/dist/js/material.min.js"></script>
+	<script src="bower_components/bootstrap-material-design/dist/js/ripples.min.js"></script>
+	<script src="bower_components/momentjs/moment.js"></script>
+	<script src="bower_components/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+	<script src="bower_components/leaflet/dist/leaflet.js"></script>
+	<script src="bower_components/proj4/dist/proj4.js"></script>
+	<script src="bower_components/Proj4Leaflet/src/proj4leaflet.js"></script>
+	<script src="app.js"></script>
+</head>
+<body>
+<div id="map"></div>
+
+<!-- Create Form Modal -->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="createModalLabel">Record New Incident</h4>
+			</div>
+			<div class="modal-body form-horizontal">
+						<!-- Location -->
+						<div class="form-group">
+							<label for="inputLocation" class="col-lg-3 control-label">Location</label>
+							<div class="col-lg-9">
+								<div class="input-group">
+									<input type="text" id="inputLocation" class="form-control" placeholder="Location" data-lat="" data-lng="" disabled/>
+									<span class="input-group-btn">
+										<button id="btnGetLocation" class="btn btn-primary" title="Place Location Marker">
+											<i class="mdi-maps-map"></i>
+										</button>
+									</span>
+								</div>
+								<span class="help-block">Location is a required field.</span>
+							</div>
+						</div>
+
+						<!-- Type -->
+						<div class="form-group">
+							<label for="inputType" class="col-lg-3 control-label">Type</label>
+							<div class="col-lg-9">
+								<input type="text" class="form-control" id="inputType" onFocus="setValidationError($('#inputType'), false);" maxlength="100" placeholder="Incident Type">
+								<span class="help-block">Type is a required field.</span>
+							</div>
+						</div>
+
+						<!-- Name -->
+						<div class="form-group">
+							<label for="inputName" class="col-lg-3 control-label">Name</label>
+							<div class="col-lg-9">
+								<input type="text" class="form-control" id="inputName" onFocus="setValidationError($('#inputName'), false);" placeholder="John Doe">
+								<span class="help-block">Name is a required field.</span>
+							</div>
+						</div>
+
+						<!-- Date & Time -->
+						<div class="form-group">
+							<label for="inputDateTime" class="col-lg-3 control-label">Date & Time</label>
+							<div class="col-lg-9">
+								<div class="input-group">
+									<input type="text" class="form-control" id="inputDateTime" placeholder="Date & Time" disabled>
+									<span class="input-group-btn">
+										<button id="btnDateTime" class="btn btn-primary" title="Select Date & Time">
+											<i class="mdi-action-today"></i>
+										</button>
+									</span>
+								</div>
+								<span class="help-block">Date & Time is a required field.</span>
+							</div>
+						</div>
+
+						<!-- Description -->
+						<div class="form-group">
+							<label for="textDescription" class="col-lg-3 control-label">Description</label>
+							<div class="col-lg-9">
+								<textarea class="form-control" rows="3" id="textDescription"></textarea>
+							</div>
+						</div>
+			</div>
+			<div class="modal-footer">
+				<button id="createDialogCancel" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				<button id="createDialogSave" type="button" class="btn btn-primary">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Create Form Modal -->
+<div class="modal fade" id="incidentModal" tabindex="-1" role="dialog" aria-labelledby="incidentModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="incidentModalLabel">Incident Details</h4>
+			</div>
+			<div class="modal-body form-horizontal">
+				<!-- Location -->
+				<div class="form-group">
+					<label class="col-lg-3 control-label">Location</label>
+					<div class="col-lg-9">
+						<p id="incidentLocation" class="form-control"></p>
+					</div>
+				</div>
+
+				<!-- Type -->
+				<div class="form-group">
+					<label class="col-lg-3 control-label">Type</label>
+					<div class="col-lg-9">
+						<p id="incidentType" class="form-control"></p>
+					</div>
+				</div>
+
+				<!-- Name -->
+				<div class="form-group">
+					<label class="col-lg-3 control-label">Name</label>
+					<div class="col-lg-9">
+						<p id="incidentName" class="form-control"></p>
+					</div>
+				</div>
+
+				<!-- Date & Time -->
+				<div class="form-group">
+					<label class="col-lg-3 control-label">Date & Time</label>
+					<div class="col-lg-9">
+						<p id="incidentDateTime" class="form-control"></p>
+					</div>
+				</div>
+
+				<!-- Description -->
+				<div class="form-group">
+					<label class="col-lg-3 control-label">Description</label>
+					<div class="col-lg-9">
+						<textarea id="incidentDescription" class="form-control"></textarea>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button id="incidentDialogClose" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
